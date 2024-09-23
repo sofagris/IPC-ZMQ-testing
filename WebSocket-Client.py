@@ -1,3 +1,4 @@
+# Description:
 # Demo WebSocket client for receiving messages from the server
 # TODO: Implement automatic reconnection and error handling
 
