@@ -1,9 +1,4 @@
 
----
-
-## **README.md**
-
-```markdown
 # WebSocket and ZeroMQ Demo
 
 This is a demo application that integrates **FastAPI**, **WebSockets**, and **ZeroMQ** to showcase inter-process communication in Python. The application allows you to send messages from a ZeroMQ client to a FastAPI server, which then broadcasts the messages to all connected WebSocket clients in real-time.
