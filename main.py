@@ -1,44 +1,50 @@
-# Instructions to Chat-GPT and Copilot:
-# - All code comment in English, translate from Norwegian if needed
-# - All code in English
-# - Remember two lines between functions
-# - Remember two lines between classes
-# - Remember maximum 79 characters per line
-# - FastAPI .on_event() is deprecated, use lifespan instead
-
-import zmq                                  # Import ZeroMQ
-import zmq.asyncio                          # Import ZeroMQ asyncio
 import asyncio
-from fastapi import FastAPI, WebSocket
 from contextlib import asynccontextmanager
-# WebSocketDisconnect used to handle disconnection exceptions
+
+import zmq
+import zmq.asyncio
+from fastapi import FastAPI, WebSocket
 from starlette.websockets import WebSocketDisconnect
 
+# Global counter for messages received
 count = 0
+# Lock to ensure thread-safe updates to the counter
 count_lock = asyncio.Lock()
 
 
-# Define the lifespan function to handle startup and shutdown,
-# as .on_event() is deprecated in FastAPI
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """
+    Lifespan function to handle startup and shutdown events.
+    Initializes the set of WebSocket clients and starts the ZMQ server.
+    """
     # Initialize the set for WebSocket clients
     app.state.websockets = set()
-    # Staring the ZMQ server and sending 'app' as a parameter
+    # Start the ZMQ server and pass 'app' as a parameter
     zmq_task = asyncio.create_task(zmq_server(app))
     try:
         yield
     finally:
-        zmq_task.cancel()   # Cancel the ZMQ server task
-        await zmq_task      # Wait for the ZMQ server to shutdown
+        # Cancel the ZMQ server task and wait for it to shutdown
+        zmq_task.cancel()
+        await zmq_task
 
 
 # Create FastAPI application with lifespan
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    lifespan=lifespan,
+    title="WebSocket and ZeroMQ Demo",
+    description="Demo application for WebSocket and ZeroMQ integration",
+    version="0.1.0"
+)
 
 
-# ZeroMQ server to receive messages from ZeroMQ client
 async def zmq_server(app: FastAPI):
+    """
+    ZeroMQ server to receive messages from ZeroMQ clients.
+    Upon receiving a message, it updates the counter and notifies
+    WebSocket clients.
+    """
     global count
     context = zmq.asyncio.Context()
     socket = context.socket(zmq.REP)
@@ -58,11 +64,10 @@ async def zmq_server(app: FastAPI):
         await notify_clients(app, message, current_count)
 
 
-async def notify_clients(
-        app: FastAPI,
-        message: str,
-        count: int
-        ):
+async def notify_clients(app: FastAPI, message: str, count: int):
+    """
+    Notify all connected WebSocket clients with the new message and count.
+    """
     # Copy the set of WebSocket clients to avoid modification during iteration
     websockets = set(app.state.websockets)
     for ws in websockets:
@@ -78,11 +83,17 @@ async def notify_clients(
 
 @app.get("/")
 async def read_root():
+    """
+    Root endpoint that returns a simple greeting.
+    """
     return {"Hello": "World"}
 
 
 @app.get("/count")
 async def get_count():
+    """
+    Endpoint to get the current count of messages received.
+    """
     async with count_lock:
         current_count = count
     return {"count": current_count}
@@ -90,6 +101,9 @@ async def get_count():
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    """
+    WebSocket endpoint to allow clients to receive real-time updates.
+    """
     await websocket.accept()
     # Add the WebSocket client to the set
     app.state.websockets.add(websocket)
