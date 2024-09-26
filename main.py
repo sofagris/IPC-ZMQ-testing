@@ -1,6 +1,10 @@
+# Description: This file contains the main application logic for the FastAPI
+# application with WebSocket and ZeroMQ integration.
+# Copyright: Copyright (c) 2024, Roy Michelsen
+# License: MIT License
+
 import asyncio
 from contextlib import asynccontextmanager
-
 import zmq
 import zmq.asyncio
 from fastapi import FastAPI, WebSocket
