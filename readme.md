@@ -10,10 +10,6 @@ This is a demo application that integrates **FastAPI**, **WebSockets**, and **Ze
 - **Message Counter**: Keeps track of the number of messages received.
 - **Thread-safe Operations**: Uses locks to ensure thread safety when updating shared data.
 
-## **Acknowledgments**
-
-This project was developed with invaluable help from **ChatGPT** and **GitHub Copilot**. Their assistance in code generation and problem-solving was instrumental in bringing this project to fruition.
-
 ## **Requirements**
 
 - Python 3.7 or higher
@@ -150,7 +146,9 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 
 This project is licensed under the MIT License.
 
----
+## **Acknowledgments**
+
+This project was developed with invaluable help from **ChatGPT** and **GitHub Copilot**. Their assistance in code generation and problem-solving was instrumental in bringing this project to fruition.
 
 ## **Additional Notes**
 

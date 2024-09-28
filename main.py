@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 import zmq
 import zmq.asyncio
 from fastapi import FastAPI, WebSocket
+from fastapi.responses import FileResponse
 from starlette.websockets import WebSocketDisconnect
 
 # Global counter for messages received
@@ -85,12 +86,16 @@ async def notify_clients(app: FastAPI, message: str, count: int):
             app.state.websockets.remove(ws)
 
 
+# Define the root endpoint.
+# We will serve a index.html file from the root endpoint.
 @app.get("/")
 async def read_root():
     """
-    Root endpoint that returns a simple greeting.
+    Endpoint to serve the index.html file.
+    This file contains the javascript client-side code example
+    for the WebSocket connection.
     """
-    return {"Hello": "World"}
+    return FileResponse("index.html")
 
 
 @app.get("/count")

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <h1>WebSocket Client</h1>
+    Open the developer console to see the messages from the WebSocket server.<br>
+    Change the WebSocket server URL in the script section of the index.html.
+    <script>
+        // Create a new WebSocket connection
+        const socket = new WebSocket('ws://127.0.0.1:8000');
+
+        // Connection opened
+        socket.addEventListener('open', function (event) {
+            console.log('Connected to WebSocket server');
+        });
+
+        // Listen for messages
+        socket.addEventListener('message', function (event) {
+            console.log('Message from server:', event.data);
+        });
+
+        // Connection closed
+        socket.addEventListener('close', function (event) {
+            console.log('Disconnected from WebSocket server');
+        });
+
+        // Handle errors
+        socket.addEventListener('error', function (event) {
+            console.error('WebSocket error:', event);
+        });
+    </script>
+</body>
+</html>
